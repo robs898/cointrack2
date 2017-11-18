@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Line Chart</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+  <style>
+  canvas{
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+  }
+  </style>
+</head>
+
+<body>
+<div style="width:75%;">
+  <canvas id="canvas"></canvas>
+</div>
+
+<button type="button" class="btn btn-primary" onclick="main()">Compute</button>
+<script>
+function main() {
+  var request = new XMLHttpRequest();
+  request.open('GET', "http://coincap.io/history/365day/BTC", true);
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      var resp = JSON.parse(request.responseText);
+      processData(resp);
+    } else {
+      console.log('We reached our target server, but it returned an error')
+    }
+  };
+  request.onerror = function() {
+    console.log('There was a connection error of some sort')
+  };
+  request.send();
+}
+
+function processData(coinJson) {
+  data = [];
+  labels = [];
+  coinJson.price.forEach(function(coinPrice) {
+    data.push(coinPrice[1])
+    labels.push(coinPrice[0])
+  });
+  newdata = [];
+  data.forEach(function(d) {
+    newdata.push(((d - data[0]) / data[0]) * 100)
+  });
+  graph(newdata, labels);
+}
+
+function graph(data, labels) {
+  var ctx = document.getElementById("canvas");
+  var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: labels,
+          datasets: [{
+              label: 'BTC price',
+              data: data,
+              borderWidth: 1
+          }]
+      },
+  });
+}
+</script>
