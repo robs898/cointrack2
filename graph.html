@@ -4,77 +4,66 @@
 <head>
   <title>Line Chart</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-  <style>
-  canvas{
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-  }
-  </style>
 </head>
 
 <body>
-<div style="width:75%;">
-  <canvas id="canvas"></canvas>
-</div>
-
+<canvas id="canvas"></canvas>
 <button type="button" class="btn btn-primary" onclick="main()">Compute</button>
 <script>
+  function main() {
+    apiCall('1', ['CVC', 'POWR', 'DNT', 'SLR', 'POT', 'MTL', 'LINK']);
+  }
 
-function apiCall(dayLength, coinSymbols) {
-  var promises = [];
-  coinSymbols.forEach(function(coinSymbol) {
-    console.log(coinSymbol);
-    promises.push(fetch('http://coincap.io/history/' + dayLength + 'day/' + coinSymbol));
-  });
-  Promise
-  .all(promises)
-  .then(function(response) {
-    var coinPromises = [];
-    response.forEach(function(resp) {
-      coinPromises.push(resp.json());
+  function apiCall(dayLength, coinSymbols) {
+    var promises = [];
+    coinSymbols.forEach(function(coinSymbol) {
+      console.log(coinSymbol);
+      promises.push(fetch('http://coincap.io/history/' + dayLength + 'day/' + coinSymbol));
+    });
+    Promise
+    .all(promises)
+    .then(function(response) {
+      var coinPromises = [];
+      response.forEach(function(resp) {
+        coinPromises.push(resp.json());
+      })
+      return Promise.all(coinPromises);
     })
-    return Promise.all(coinPromises);
-  })
-  .then(function(coinJsons) {
-    processData(coinJsons[0]);
-  })
-  .catch(function(error) {
-    console.log(error);
-  });
-}
-
-function main() {
-  apiCall('7', ['OMG']);
-}
-
-function processData(coinJson) {
-  console.log(coinJson);
-  data = [];
-  labels = [];
-  coinJson.price.forEach(function(coinPrice) {
-    data.push(coinPrice[1])
-    labels.push(coinPrice[0])
-  });
-  newdata = [];
-  data.forEach(function(d) {
-    newdata.push(((d - data[0]) / data[0]) * 100)
-  });
-  graph(newdata, labels);
-}
-
-function graph(data, labels) {
-  var ctx = document.getElementById("canvas");
-  var myChart = new Chart(ctx, {
+    .then(function(coinJsons) {
+      processData(coinJsons, coinSymbols);
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+  }
+  
+  function processData(coinJsons, coinSymbols) {
+    var labels = coinJsons[0].price;
+    var datasets = [];
+    for (var i = coinJsons.length -1; i >=0; i--) {
+      var label = coinSymbols[i];
+      var data = [];
+      coinJsons[i].price.forEach(function(coinPrice) {
+        data.push(coinPrice[1])
+      })
+      var newdata = [];
+      data.forEach(function(d) {
+        newdata.push(((d - data[0]) / data[0]) * 100)
+      })
+      var dataset = { label: label, data: newdata };
+      datasets.push(dataset);
+    };
+    graph(datasets, labels);
+  }
+  
+  function graph(datasets, labels) {
+    var ctx = document.getElementById("canvas");
+    var myChart = new Chart(ctx, {
       type: 'line',
       data: {
-          labels: labels,
-          datasets: [{
-              label: 'Price (USD)',
-              data: data,
-              borderWidth: 1
-          }]
+        labels: labels,
+        datasets: datasets
       },
-  });
-}
+    });
+  }
 </script>
