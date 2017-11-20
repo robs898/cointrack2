@@ -20,24 +20,36 @@
 
 <button type="button" class="btn btn-primary" onclick="main()">Compute</button>
 <script>
+
+function apiCall(dayLength, coinSymbols) {
+  var promises = [];
+  coinSymbols.forEach(function(coinSymbol) {
+    console.log(coinSymbol);
+    promises.push(fetch('http://coincap.io/history/' + dayLength + 'day/' + coinSymbol));
+  });
+  Promise
+  .all(promises)
+  .then(function(response) {
+    var coinPromises = [];
+    response.forEach(function(resp) {
+      coinPromises.push(resp.json());
+    })
+    return Promise.all(coinPromises);
+  })
+  .then(function(coinJsons) {
+    processData(coinJsons[0]);
+  })
+  .catch(function(error) {
+    console.log(error);
+  });
+}
+
 function main() {
-  var request = new XMLHttpRequest();
-  request.open('GET', "http://coincap.io/history/365day/BTC", true);
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      var resp = JSON.parse(request.responseText);
-      processData(resp);
-    } else {
-      console.log('We reached our target server, but it returned an error')
-    }
-  };
-  request.onerror = function() {
-    console.log('There was a connection error of some sort')
-  };
-  request.send();
+  apiCall('7', ['OMG']);
 }
 
 function processData(coinJson) {
+  console.log(coinJson);
   data = [];
   labels = [];
   coinJson.price.forEach(function(coinPrice) {
@@ -58,7 +70,7 @@ function graph(data, labels) {
       data: {
           labels: labels,
           datasets: [{
-              label: 'BTC price',
+              label: 'Price (USD)',
               data: data,
               borderWidth: 1
           }]
