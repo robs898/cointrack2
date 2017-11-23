@@ -3,8 +3,8 @@
 
   <head>
     <title>Line Chart</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
   </head>
   
   <body>
@@ -47,7 +47,7 @@
     function apiCall(dayLength, coinSymbols) {
       var promises = [];
       coinSymbols.forEach(function(coinSymbol) {
-        promises.push(fetch('http://coincap.io/history/' + dayLength + 'day/' + coinSymbol));
+        promises.push(fetch('https://coincap.io/history/' + dayLength + 'day/' + coinSymbol));
       });
       Promise
       .all(promises)
