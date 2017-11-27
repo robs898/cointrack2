@@ -3,41 +3,56 @@
 
   <head>
     <title>Line Chart</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
   </head>
   
   <body>
     <div class="container">
-      <div id="graphCanvas">
-        <canvas id="canvas"></canvas>
-      </div>
+        <div id="graphCanvas">
+          <canvas id="canvas"></canvas>
+        </div>
       <h1>Coin Track</h1>
       <div class="row">
-        <p>Day Length</p>
-        <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-primary active">
-            <input type="radio" name="dayLength" id="1" autocomplete="off" checked> 1
+        <div class="form-check form-check-inline">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="BTC" checked> BTC
           </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="dayLength" id="7" autocomplete="off"> 7
+        </div>
+        <div class="form-check form-check-inline">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="ETH" checked> ETH
           </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="dayLength" id="30" autocomplete="off"> 30
-          </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="dayLength" id="90" autocomplete="off"> 90
-          </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="dayLength" id="180" autocomplete="off"> 180
-          </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="dayLength" id="365" autocomplete="off"> 365
+        </div>
+        <div class="form-check form-check-inline disabled">
+          <label class="form-check-label">
+            <input class="form-check-input" type="checkbox" id="BCH" checked> BCH
           </label>
         </div>
       </div>
+      <div class="row">
+        <p>Day Length</p>
+        <div class="form-check form-check-inline">
+          <label class="form-check-label">
+            <input class="form-check-input" type="radio" name="dayLength" id="1" checked> 1
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <label class="form-check-label">
+            <input class="form-check-input" type="radio" name="dayLength" id="7"> 7
+          </label>
+        </div>
+        <div class="form-check form-check-inline disabled">
+          <label class="form-check-label">
+            <input class="form-check-input" type="radio" name="dayLength" id="30"> 30
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-primary" onclick="main()">Compute</button>
+      </div>
     </div>
-    <button type="button" class="btn btn-primary" onclick="main()">Compute</button>
     <script>
     function main() {
       var days = document.querySelector('input[name="dayLength"]:checked').id;
