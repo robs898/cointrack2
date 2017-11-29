@@ -235,6 +235,9 @@
       coinJsons[0].price.forEach(function(arr) {
         labels.push(arr[0])
       });
+      labels = labels.filter(function(_, i) {
+        return (i + 1) % 2;
+      })
       var datasets = [];
       for (var i = coinJsons.length -1; i >=0; i--) {
         var label = coinSymbols[i];
@@ -245,6 +248,9 @@
         var newdata = [];
         data.forEach(function(d) {
           newdata.push(((d - data[0]) / data[0]) * 100)
+        })
+        newdata = newdata.filter(function(_, i) {
+          return (i + 1) % 2;
         })
         var dataset = { label: label, data: newdata };
         datasets.push(dataset);
@@ -266,6 +272,23 @@
           datasets: datasets
         },
         options: {
+          elements: {
+            point: {
+              radius: 0,
+            }
+          },
+          showLines: {
+            line: {
+              tension: 0,
+            }
+          },
+          animation: {
+            duration: 0, // general animation time
+          },
+          hover: {
+              animationDuration: 0, // duration of animations when hovering an item
+          },
+          responsiveAnimationDuration: 0, // animation duration after a resize
           scales: {
             xAxes: [{
               type: "time",
